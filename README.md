@@ -10,4 +10,4 @@ This program should be executed from the command line, in the following manner:
 
 `node download_avatars.js jquery jquery`
 
-Requires you to have a github token in a file named `secrets.js` formatted as: `module.exports = [your github token]`
+Requires you to have a github token in a file named `.env` formatted as: `GITHUB_TOKEN=[your github token]`
