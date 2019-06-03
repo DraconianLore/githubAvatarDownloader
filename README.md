@@ -10,4 +10,4 @@ This program should be executed from the command line, in the following manner:
 
 `node download_avatars.js jquery jquery`
 
-Created [Trello Board](https://trello.com/invite/b/HJE86VHG/ac1208995bd9523fd958c148d79f36f0/github-avarat-downloader) to track requirements
+Requires you to have a github token in a file named `secrets.js` formatted as: `module.exports = [your github token]`
