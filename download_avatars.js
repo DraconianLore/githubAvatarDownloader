@@ -27,15 +27,17 @@ function downloadImageByURL(name, url, filePath) {
         })
         .pipe(fs.createWriteStream(filePath + name + '.jpg'))
 }
+if (process.argv[3]) {
+    let owner = process.argv[2];
+    let repo = process.argv[3];
+    getRepoContributors(owner, repo, function(err, results) {
+        console.log('errors:', err);
+        let contribs = JSON.parse(results)
+        for (let people of contribs) {
+            downloadImageByURL(people.login, people.avatar_url, './avatars/' + repo + '-');
+        }
 
-
-
-
-getRepoContributors('robbyrussell', 'oh-my-zsh', function(err, results) {
-    console.log('errors:', err);
-    let contribs = JSON.parse(results)
-    for (let people of contribs) {
-        downloadImageByURL(people.login, people.avatar_url, './avatars/');
-    }
-
-});
+    });
+} else {
+    console.log('Please enter a Repository Owner and a Repository:\n---> node download_avatars.js [repository owner] [repository]');
+}
