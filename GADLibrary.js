@@ -65,9 +65,8 @@ let toRunOrNotToRun = function() {
 
 let getStars = function(err, information, repo) {
     information = JSON.parse(information)
-    let starredRepos = [];
+    let starredRepos = {};
     let options = {};
-    // var writerStream = fs.createWriteStream('temp.data');
     for (let people of information) {
         options = {
             url: 'https://api.github.com/users/' + people.login + '/starred',
@@ -76,36 +75,38 @@ let getStars = function(err, information, repo) {
                 'Authorization': 'token ' + process.env.GITHUB_TOKEN
             }
         };
-        let i = 0;
         request(options, function(err, res, body) {
             body = JSON.parse(body);
             for (let stars of body) {
-                let starredRepo = stars.name;
-                let starredOwner = stars.owner.login;
-                starredRepos[i] = [starredOwner + ', ' + starredRepo];
-                i++;
-
-                // writerStream.write('[[' + starredOwner + '],[' + starredRepo + '],\n', 'UTF8')
-                // if (starredRepos[starredOwner]) {
-                //     starredRepos[starredOwner][1]++;
-                // } else {
-                //     starredRepos[starredOwner] = [starredRepo, 1]
-                // }
+                let starredRepo = stars.full_name;
+                if (starredRepos[starredRepo]) {
+                    starredRepos[starredRepo]++;
+                } else {
+                    starredRepos[starredRepo] = 1;
+                }
             }
         })
 
     }
-    console.log(starredRepos);
-    // writerStream.end();
+    setTimeout(function() {
+        let sortedRepos = [];
+        for (let repos in starredRepos) {
+            sortedRepos.push([repos, starredRepos[repos]]);
+        }
+        sortedRepos.sort(function(a, b) {
+            return a[1] - b[1];
+        })
+        let finalSort = [];
+        for (let i = sortedRepos.length - 1; i > sortedRepos.length - 6; i--) {
+            finalSort.push(sortedRepos[i]);
+        }
+        for (let i = 0; i < finalSort.length; i++) {
+            console.log('[', finalSort[i][1], 'stars ]', finalSort[i][0])
+        }
 
-    // Need to get stream end so i can sort through the data, then delete the temp file...
 
-    // writerStream.on('end', function() {
-    //     console.log('write completed');
-    // })
-    // writerStream.on('error', function(err) {
-    //     console.log(err.stack);
-    // })
+    }, 3000);
+
 
 }
 
