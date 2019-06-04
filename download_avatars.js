@@ -13,7 +13,12 @@ function getRepoContributors(repoOwner, repoName, cb) {
         }
     };
     request(options, function(err, res, body) {
-        cb(err, body, repoName);
+        // check if repo and owner exist before continuing
+        if (res.statusCode === 200) {
+            cb(err, body, repoName);
+        } else {
+            console.log('ERROR: Invalid Repository Owner or Repository')
+        }
     })
 }
 
@@ -30,6 +35,9 @@ function downloadImageByURL(name, url, filePath) {
 
 let saveImages = function(err, results, repo) {
     console.log('errors:', err);
+    if (err) {
+        return;
+    }
     let contribs = JSON.parse(results);
     let localURL = './avatars/' + repo + '-';
     for (let people of contribs) {
@@ -39,11 +47,26 @@ let saveImages = function(err, results, repo) {
 
 
 }
-// Check for command line arguments, run if they exist, stop if they dont
-if (process.argv[3]) {
+// Check for errors, if any are found don't run the application
+let toRunOrNotToRun = function() {
+    if (!process.env.GITHUB_TOKEN) {
+        console.log('\nPlease create a .env file with your github token\n---> GITHUB_TOKEN=[your github token]')
+        return false;
+    }
+    if (!fs.existsSync('./avatars')) {
+        console.log('\nERROR: Missing Folder');
+        console.log('Please create a folder named "avatars"');
+        return false;
+    }
+    if (!process.argv[3]) {
+        console.log('\nPlease enter a Repository Owner and a Repository:\n---> node download_avatars.js [repository owner] [repository]');
+    }
+    return true;
+}
+
+
+if (toRunOrNotToRun()) {
     let owner = process.argv[2];
     let repo = process.argv[3];
     getRepoContributors(owner, repo, saveImages);
-} else {
-    console.log('Please enter a Repository Owner and a Repository:\n---> node download_avatars.js [repository owner] [repository]');
 }
