@@ -17,7 +17,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
         if (res.statusCode === 200) {
             cb(err, body, repoName);
         } else {
-            console.log('ERROR: Invalid Repository Owner or Repository')
+            console.log('\nERROR: Invalid Repository Owner or Repository')
         }
     })
 }
@@ -43,10 +43,8 @@ let saveImages = function(err, results, repo) {
     for (let people of contribs) {
         downloadImageByURL(people.login, people.avatar_url, localURL);
     }
-
-
-
 }
+
 // Check for errors, if any are found don't run the application
 let toRunOrNotToRun = function() {
     if (!process.env.GITHUB_TOKEN) {
