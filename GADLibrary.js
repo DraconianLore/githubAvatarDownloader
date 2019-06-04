@@ -12,9 +12,6 @@ function getRepoContributors(repoOwner, repoName, cb) {
             'Authorization': 'token ' + process.env.GITHUB_TOKEN
         }
     };
-    if (whatDoIWant == 'stars') {
-
-    }
     request(options, function(err, res, body) {
         // check if repo and owner exist before continuing
         if (res.statusCode === 200) {
@@ -67,8 +64,18 @@ let toRunOrNotToRun = function() {
 }
 let getStars = function(err, information, repo) {
     information = JSON.parse(information)
-    for (let people of information)
-        console.log(people.starred_url);
+    let options = {};
+    for (let people of information) {
+        options = {
+            url: 'https://api.github.com/users/' + people.login + '/starred',
+            headers: {
+                'User-Agent': 'request',
+                'Authorization': 'token ' + process.env.GITHUB_TOKEN
+            }
+        };
+        // add function here
+
+    }
 }
 
 module.exports = {
