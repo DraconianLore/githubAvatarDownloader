@@ -9,5 +9,7 @@ Given a GitHub repository name and owner, download all the contributors' profile
 This program should be executed from the command line, in the following manner:
 
 `node download_avatars.js jquery jquery`
+or:
+`node reccomend.js jquery jquery` for a list of recommended repositories
 
 Requires you to have a github token in a file named `.env` formatted as: `GITHUB_TOKEN=[your github token]`
