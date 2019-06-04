@@ -62,9 +62,12 @@ let toRunOrNotToRun = function() {
     }
     return true;
 }
+
 let getStars = function(err, information, repo) {
     information = JSON.parse(information)
+    let starredRepos = [];
     let options = {};
+    // var writerStream = fs.createWriteStream('temp.data');
     for (let people of information) {
         options = {
             url: 'https://api.github.com/users/' + people.login + '/starred',
@@ -73,10 +76,40 @@ let getStars = function(err, information, repo) {
                 'Authorization': 'token ' + process.env.GITHUB_TOKEN
             }
         };
-        // add function here
+        let i = 0;
+        request(options, function(err, res, body) {
+            body = JSON.parse(body);
+            for (let stars of body) {
+                let starredRepo = stars.name;
+                let starredOwner = stars.owner.login;
+                starredRepos[i] = [starredOwner + ', ' + starredRepo];
+                i++;
+
+                // writerStream.write('[[' + starredOwner + '],[' + starredRepo + '],\n', 'UTF8')
+                // if (starredRepos[starredOwner]) {
+                //     starredRepos[starredOwner][1]++;
+                // } else {
+                //     starredRepos[starredOwner] = [starredRepo, 1]
+                // }
+            }
+        })
 
     }
+    console.log(starredRepos);
+    // writerStream.end();
+
+    // Need to get stream end so i can sort through the data, then delete the temp file...
+
+    // writerStream.on('end', function() {
+    //     console.log('write completed');
+    // })
+    // writerStream.on('error', function(err) {
+    //     console.log(err.stack);
+    // })
+
 }
+
+
 
 module.exports = {
     toRunOrNotToRun: toRunOrNotToRun,
